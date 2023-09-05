@@ -51,7 +51,7 @@ Syncing huge date windows may take longer due to Mixpanel's low API rate-limits 
 
 | Version | Date       | Pull Request                                             | Subject                                                                                                     |
 |:--------|:-----------|:---------------------------------------------------------|:------------------------------------------------------------------------------------------------------------|
-| 1.0.0   | 2023-09-20 | [00000](https://github.com/airbytehq/airbyte/pull/00000) | Prepare for certifying to the next stage                                                                    |
+| 1.0.0   | 2023-09-20 | [30149](https://github.com/airbytehq/airbyte/pull/30149) | Prepare for certifying to the next stage                                                                    |
 | 0.1.39  | 2023-09-15 | [30469](https://github.com/airbytehq/airbyte/pull/30469) | Add default primary key `distinct_id` to `Export` stream                                                    |
 | 0.1.38  | 2023-08-31 | [30028](https://github.com/airbytehq/airbyte/pull/30028) | Handle gracefully project timezone mismatch                                                                 |
 | 0.1.37  | 2023-07-20 | [27932](https://github.com/airbytehq/airbyte/pull/27932) | Fix spec: change start/end date format to `date`                                                            |
