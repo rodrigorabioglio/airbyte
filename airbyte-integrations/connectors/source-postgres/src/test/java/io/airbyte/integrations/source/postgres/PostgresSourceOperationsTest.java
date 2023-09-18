@@ -7,6 +7,7 @@ package io.airbyte.integrations.source.postgres;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -170,6 +171,50 @@ class PostgresSourceOperationsTest {
       }
     }
     assertThat(actualRecords, containsInAnyOrder(expectedRecords.toArray()));
+  }
+
+  @Test
+  public void arrayTypesHandling() throws SQLException {
+    executeQuery("""
+        CREATE TABLE array_table (
+          id INTEGER PRIMARY KEY,
+          jsonb_array JSONB[] NOT NULL,
+          bit_array BIT[] NOT NULL
+        );""");
+    executeQuery("""
+        INSERT INTO array_table VALUES (
+          1,
+          ARRAY['{"foo":"bar"}'::JSONB],
+          ARRAY[1::BIT, 0::BIT]
+        );""");
+    final ObjectNode jsonNode = (ObjectNode) Jsons.jsonNode(Collections.emptyMap());
+    try (final Connection connection = container.createConnection("")) {
+      final PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from array_table");
+      try (final ResultSet resultSet = preparedStatement.executeQuery()) {
+        final int actualColumnCount = resultSet.getMetaData().getColumnCount();
+        assertEquals(3, actualColumnCount);
+        assertTrue(resultSet.next());
+        for (int i = 1; i <= actualColumnCount; i++) {
+          postgresSourceOperations.copyToJsonField(resultSet, i, jsonNode);
+        }
+      }
+    }
+    {
+      final String jsonbArrayField = "jsonb_array";
+      assertTrue(jsonNode.hasNonNull(jsonbArrayField));
+      assertTrue(jsonNode.get(jsonbArrayField).isArray());
+      assertTrue(jsonNode.get(jsonbArrayField).hasNonNull(0));
+      assertTrue(jsonNode.get(jsonbArrayField).get(0).isTextual());
+    }
+    {
+      final String bitArrayField = "bit_array";
+      assertTrue(jsonNode.hasNonNull(bitArrayField));
+      assertTrue(jsonNode.get(bitArrayField).isArray());
+      assertTrue(jsonNode.get(bitArrayField).hasNonNull(0));
+      assertTrue(jsonNode.get(bitArrayField).get(0).isBoolean());
+      assertTrue(jsonNode.get(bitArrayField).hasNonNull(1));
+      assertTrue(jsonNode.get(bitArrayField).get(1).isBoolean());
+    }
   }
 
   @Test
