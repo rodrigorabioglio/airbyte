@@ -176,17 +176,17 @@ class PostgresSourceOperationsTest {
   @Test
   public void arrayTypesHandling() throws SQLException {
     executeQuery("""
-        CREATE TABLE array_table (
-          id INTEGER PRIMARY KEY,
-          jsonb_array JSONB[] NOT NULL,
-          bit_array BIT[] NOT NULL
-        );""");
+                 CREATE TABLE array_table (
+                   id INTEGER PRIMARY KEY,
+                   jsonb_array JSONB[] NOT NULL,
+                   bit_array BIT[] NOT NULL
+                 );""");
     executeQuery("""
-        INSERT INTO array_table VALUES (
-          1,
-          ARRAY['{"foo":"bar"}'::JSONB],
-          ARRAY[1::BIT, 0::BIT]
-        );""");
+                 INSERT INTO array_table VALUES (
+                   1,
+                   ARRAY['{"foo":"bar"}'::JSONB],
+                   ARRAY[1::BIT, 0::BIT]
+                 );""");
     final ObjectNode jsonNode = (ObjectNode) Jsons.jsonNode(Collections.emptyMap());
     try (final Connection connection = container.createConnection("")) {
       final PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from array_table");
