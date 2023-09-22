@@ -41,8 +41,4 @@ def patch_time(mocker):
 
 @pytest.fixture(autouse=True)
 def disable_cache(mocker):
-    mocker.patch(
-        "source_mixpanel.streams.cohorts.Cohorts.use_cache",
-        new_callable=mocker.PropertyMock,
-        return_value=False
-    )
+    mocker.patch("source_mixpanel.streams.cohorts.Cohorts.use_cache", new_callable=mocker.PropertyMock, return_value=False)

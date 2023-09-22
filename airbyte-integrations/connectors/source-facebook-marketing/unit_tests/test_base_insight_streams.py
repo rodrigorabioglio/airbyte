@@ -301,7 +301,7 @@ class TestBaseInsightsStream:
             end_date=datetime(2011, 1, 1),
             fields=["account_id", "account_currency"],
             insights_lookback_window=28,
-            level="adset"
+            level="adset",
         )
 
         assert stream.level == "adset"

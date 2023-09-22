@@ -23,7 +23,7 @@ def config_fixture(requests_mock):
         "end_date": "2020-10-10T00:00:00Z",
     }
     requests_mock.register_uri("GET", FacebookSession.GRAPH + f"/{FacebookAdsApi.API_VERSION}/me/business_users", json={"data": []})
-    requests_mock.register_uri("GET", FacebookSession.GRAPH + f"/{FacebookAdsApi.API_VERSION}/act_123/",  json={"account": 123})
+    requests_mock.register_uri("GET", FacebookSession.GRAPH + f"/{FacebookAdsApi.API_VERSION}/act_123/", json={"account": 123})
     return config
 
 
@@ -154,18 +154,15 @@ def test_check_config(config_gen, requests_mock, fb_marketing):
 
 
 def test_check_connection_account_type_exception(mocker, fb_marketing, config, logger_mock, requests_mock):
-    account_id = '123'
-    ad_account_response = {
-        "json": {
-            "account_id": account_id,
-            "id": f"act_{account_id}",
-            'is_personal': 1
-        }
-    }
+    account_id = "123"
+    ad_account_response = {"json": {"account_id": account_id, "id": f"act_{account_id}", "is_personal": 1}}
     requests_mock.reset_mock()
     requests_mock.register_uri("GET", f"{FacebookSession.GRAPH}/{FacebookAdsApi.API_VERSION}/act_123/", [ad_account_response])
 
     result, error = fb_marketing.check_connection(logger=logger_mock, config=config)
 
     assert not result
-    assert error == "The personal ad account you're currently using is not eligible for this operation. Please switch to a business ad account."
+    assert (
+        error
+        == "The personal ad account you're currently using is not eligible for this operation. Please switch to a business ad account."
+    )

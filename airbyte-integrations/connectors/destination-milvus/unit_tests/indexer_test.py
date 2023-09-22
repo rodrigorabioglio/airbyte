@@ -52,7 +52,7 @@ class TestMilvusIndexer(unittest.TestCase):
             ("cloud", "http://example.org", "Host must start with https://"),
             ("cloud", "https://example.org", None),
             ("", "http://example.org", None),
-            ("", "https://example.org", None)
+            ("", "https://example.org", None),
         ]
         for deployment_mode, uri, expected_error_message in test_cases:
             os.environ["DEPLOYMENT_MODE"] = deployment_mode
@@ -99,9 +99,7 @@ class TestMilvusIndexer(unittest.TestCase):
             "fields": [{"name": self.mock_config.vector_field, "type": DataType.FLOAT_VECTOR, "params": {"dim": 64}}],
         }
         result = self.milvus_indexer.check()
-        self.assertEqual(
-            result, f"Vector field {self.mock_config.vector_field} is not a 128-dimensional vector"
-        )
+        self.assertEqual(result, f"Vector field {self.mock_config.vector_field} is not a 128-dimensional vector")
 
     def test_pre_sync_calls_delete(self):
         mock_iterator = Mock()
@@ -130,11 +128,9 @@ class TestMilvusIndexer(unittest.TestCase):
         self.milvus_indexer._collection.delete.assert_not_called()
 
     def test_index_calls_insert(self):
-        self.milvus_indexer.index([Mock(metadata={"key": "value"}, page_content="some content", embedding=[1,2,3])], [])
+        self.milvus_indexer.index([Mock(metadata={"key": "value"}, page_content="some content", embedding=[1, 2, 3])], [])
 
-        self.milvus_indexer._collection.insert.assert_called_with(
-            [{"key": "value", "vector": [1,2,3], "text": "some content"}]
-        )
+        self.milvus_indexer._collection.insert.assert_called_with([{"key": "value", "vector": [1, 2, 3], "text": "some content"}])
 
     def test_index_calls_delete(self):
         mock_iterator = Mock()

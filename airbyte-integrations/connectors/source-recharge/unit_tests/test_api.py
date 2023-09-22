@@ -214,7 +214,16 @@ class TestFullRefreshStreams:
             (Collections, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
             (Metafields, {"cursor": "12353"}, {"updated_at": "2030-01-01"}, {}, {"limit": 250, "owner_resource": None, "cursor": "12353"}),
             (Products, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
-            (Shop, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z",}),
+            (
+                Shop,
+                None,
+                {},
+                {},
+                {
+                    "limit": 250,
+                    "updated_at_min": "2021-08-15T00:00:00Z",
+                },
+            ),
         ],
     )
     def test_request_params(self, config, stream_cls, next_page_token, stream_state, stream_slice, expected):
@@ -312,15 +321,12 @@ class TestIncrementalStreams:
         "stream_cls, next_page_token, stream_state, stream_slice, expected",
         [
             (Addresses, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
-            (Charges, {"cursor": "123"}, {"updated_at": "2030-01-01"}, {},
-             {"limit": 250, "cursor": "123"}),
+            (Charges, {"cursor": "123"}, {"updated_at": "2030-01-01"}, {}, {"limit": 250, "cursor": "123"}),
             (Customers, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
             (Discounts, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
-            (Onetimes, {"cursor": "123"}, {"updated_at": "2030-01-01"}, {},
-             {"limit": 250, "cursor": "123"}),
+            (Onetimes, {"cursor": "123"}, {"updated_at": "2030-01-01"}, {}, {"limit": 250, "cursor": "123"}),
             (Orders, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
-            (Subscriptions, None, {}, {},
-             {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
+            (Subscriptions, None, {}, {}, {"limit": 250, "updated_at_min": "2021-08-15T00:00:00Z"}),
         ],
     )
     def test_request_params(self, config, stream_cls, next_page_token, stream_state, stream_slice, expected):

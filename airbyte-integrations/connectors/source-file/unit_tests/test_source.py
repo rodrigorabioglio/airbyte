@@ -43,7 +43,7 @@ def test_csv_with_utf16_encoding(absolute_path, test_files):
     config_local_csv_utf16 = {
         "dataset_name": "AAA",
         "format": "csv",
-        "reader_options": '{"encoding":"utf_16", "parse_dates": [\"header5\"]}',
+        "reader_options": '{"encoding":"utf_16", "parse_dates": ["header5"]}',
         "url": f"{absolute_path}/{test_files}/test_utf16.csv",
         "provider": {"storage": "local"},
     }
@@ -223,4 +223,6 @@ def test_incorrect_reader_options(absolute_path, test_files):
     with pytest.raises(ConfigurationError) as e:
         records = source.read(logger=logger, config=deepcopy(config), catalog=catalog)
         records = [r.record.data for r in records]
-    assert "can not be parsed. Please check your reader_options. https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html" in str(e.value)
+    assert "can not be parsed. Please check your reader_options. https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html" in str(
+        e.value
+    )

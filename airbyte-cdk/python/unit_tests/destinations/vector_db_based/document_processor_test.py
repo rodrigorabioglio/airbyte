@@ -36,12 +36,21 @@ def initialize_processor():
 @pytest.mark.parametrize(
     "metadata_fields, expected_metadata",
     [
-        (None, {"_ab_stream": "namespace1_stream1", "id": 1, "text": "This is the text", "complex": {"test": "abc"}, "arr": [{"test": "abc"}, {"test": "def"}]}),
+        (
+            None,
+            {
+                "_ab_stream": "namespace1_stream1",
+                "id": 1,
+                "text": "This is the text",
+                "complex": {"test": "abc"},
+                "arr": [{"test": "abc"}, {"test": "def"}],
+            },
+        ),
         (["id"], {"_ab_stream": "namespace1_stream1", "id": 1}),
         (["id", "non_existing"], {"_ab_stream": "namespace1_stream1", "id": 1}),
         (["id", "complex.test"], {"_ab_stream": "namespace1_stream1", "id": 1, "complex.test": "abc"}),
         (["id", "arr.*.test"], {"_ab_stream": "namespace1_stream1", "id": 1, "arr.*.test": ["abc", "def"]}),
-    ]
+    ],
 )
 def test_process_single_chunk_with_metadata(metadata_fields, expected_metadata):
     processor = initialize_processor()
@@ -136,12 +145,7 @@ def test_complex_text_fields():
             "non_text": "a",
             "non_text_2": 1,
             "text": "This is the regular text",
-            "other_nested": {
-                "non_text": {
-                    "a": "xyz",
-                    "b": "abc"
-                }
-            }
+            "other_nested": {"non_text": {"a": "xyz", "b": "abc"}},
         },
         emitted_at=1234,
     )
@@ -152,17 +156,15 @@ def test_complex_text_fields():
     chunks, _ = processor.process(record)
 
     assert len(chunks) == 1
-    assert chunks[0].page_content == """nested.texts.*.text: This is the text
+    assert (
+        chunks[0].page_content
+        == """nested.texts.*.text: This is the text
 And another
 text: This is the regular text
 other_nested.non_text: \na: xyz
 b: abc"""
-    assert chunks[0].metadata == {
-        "id": 1,
-        "non_text": "a",
-        "non_text_2": 1,
-        "_ab_stream": "namespace1_stream1"
-    }
+    )
+    assert chunks[0].metadata == {"id": 1, "non_text": "a", "non_text_2": 1, "_ab_stream": "namespace1_stream1"}
 
 
 def test_no_text_fields():
@@ -220,9 +222,11 @@ def test_process_multiple_chunks_with_relevant_fields():
         ({"id": 99, "name": "John Doe", "age": 25}, "namespace1_stream1_99_John Doe_25", [["id"], ["name"], ["age"]]),
         ({"nested": {"id": "abc"}, "name": "John Doe"}, "namespace1_stream1_abc_John Doe", [["nested", "id"], ["name"]]),
         ({"nested": {"id": "abc"}}, "namespace1_stream1_abc___not_found__", [["nested", "id"], ["name"]]),
-    ]
+    ],
 )
-def test_process_multiple_chunks_with_dedupe_mode(primary_key_value: Mapping[str, Any], stringified_primary_key: str, primary_key: List[List[str]]):
+def test_process_multiple_chunks_with_dedupe_mode(
+    primary_key_value: Mapping[str, Any], stringified_primary_key: str, primary_key: List[List[str]]
+):
     processor = initialize_processor()
 
     record = AirbyteRecordMessage(
@@ -231,7 +235,7 @@ def test_process_multiple_chunks_with_dedupe_mode(primary_key_value: Mapping[str
         data={
             "text": "This is the text and it is long enough to be split into multiple chunks. This is the text and it is long enough to be split into multiple chunks. This is the text and it is long enough to be split into multiple chunks",
             "age": 25,
-            **primary_key_value
+            **primary_key_value,
         },
         emitted_at=1234,
     )

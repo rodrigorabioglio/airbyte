@@ -30,8 +30,8 @@ def test_streams_are_unique(config):
         ({"lookback_window_days": "month"}, False, "Invalid lookback window month. Please use only positive integer values or 0."),
         ({"start_date": "January First, 2022"}, False, "Invalid start date January First, 2022. Please use YYYY-MM-DDTHH:MM:SSZ format."),
         ({"slice_range": -10}, False, "Invalid slice range value -10. Please use positive integer values only."),
-        ({"account_id": 1, "client_secret": "secret"}, True, None)
-    )
+        ({"account_id": 1, "client_secret": "secret"}, True, None),
+    ),
 )
 @patch.object(source_stripe.source, "stripe")
 def test_config_validation(mocked_client, input_config, is_success, expected_error_msg):

@@ -48,8 +48,8 @@ def test_pinecone_index_upsert_and_delete(mock_describe_index):
     indexer._pod_type = "p1"
     indexer.index(
         [
-            Mock(page_content="test", metadata={"_ab_stream": "abc"}, embedding=[1,2,3]),
-            Mock(page_content="test2", metadata={"_ab_stream": "abc"}, embedding=[4,5,6]),
+            Mock(page_content="test", metadata={"_ab_stream": "abc"}, embedding=[1, 2, 3]),
+            Mock(page_content="test2", metadata={"_ab_stream": "abc"}, embedding=[4, 5, 6]),
         ],
         ["delete_id1", "delete_id2"],
     )
@@ -70,8 +70,8 @@ def test_pinecone_index_upsert_and_delete_starter(mock_describe_index):
     indexer.pinecone_index.query.return_value = MagicMock(matches=[MagicMock(id="doc_id1"), MagicMock(id="doc_id2")])
     indexer.index(
         [
-            Mock(page_content="test", metadata={"_ab_stream": "abc"}, embedding=[1,2,3]),
-            Mock(page_content="test2", metadata={"_ab_stream": "abc"}, embedding=[4,5,6]),
+            Mock(page_content="test", metadata={"_ab_stream": "abc"}, embedding=[1, 2, 3]),
+            Mock(page_content="test2", metadata={"_ab_stream": "abc"}, embedding=[4, 5, 6]),
         ],
         ["delete_id1", "delete_id2"],
     )
@@ -97,7 +97,9 @@ def test_pinecone_index_delete_1k_limit(mock_describe_index):
         [],
         ["delete_id1"],
     )
-    indexer.pinecone_index.delete.assert_has_calls([call(ids=[f"doc_id_{str(i)}" for i in range(1000)]), call(ids=[f"doc_id_{str(i+1000)}" for i in range(300)])])
+    indexer.pinecone_index.delete.assert_has_calls(
+        [call(ids=[f"doc_id_{str(i)}" for i in range(1000)]), call(ids=[f"doc_id_{str(i+1000)}" for i in range(300)])]
+    )
 
 
 def test_pinecone_index_empty_batch():
@@ -113,7 +115,7 @@ def test_pinecone_index_empty_batch():
 def test_pinecone_index_upsert_batching():
     indexer = create_pinecone_indexer()
     indexer.index(
-        [Mock(page_content=f"test {i}", metadata={"_ab_stream": "abc"}, embedding=[i,i,i]) for i in range(50)],
+        [Mock(page_content=f"test {i}", metadata={"_ab_stream": "abc"}, embedding=[i, i, i]) for i in range(50)],
         [],
     )
     assert indexer.pinecone_index.upsert.call_count == 2
